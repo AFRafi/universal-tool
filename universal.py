@@ -4,7 +4,16 @@ import os
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 system = platform.system().lower()
-is_android = "android" in os.popen("uname -o 2>/dev/null").read().lower() or "termux" in os.environ.get("PREFIX", "").lower()
+machine = platform.machine().lower()
+
+# Comprehensive Android detection (Termux, Pydroid 3, QPython, Generic Android)
+is_android = (
+    hasattr(sys, "getandroidapilevel")
+    or "android" in os.environ.get("ANDROID_ROOT", "").lower()
+    or "termux" in os.environ.get("PREFIX", "").lower()
+    or "pydroid" in sys.executable.lower()
+    or "android" in platform.platform().lower()
+)
 
 target_folder = None
 if is_android:
